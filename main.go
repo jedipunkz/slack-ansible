@@ -2,12 +2,16 @@ package main
 
 import (
 	"bytes"
+	"crypto/rand"
+	"encoding/binary"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -25,7 +29,10 @@ var (
 	outputfile string = "/tmp/slack-ansible"
 )
 
-const S3Endpoint = "http://localhost:4572"
+const (
+	S3Endpoint = "http://localhost:4572"
+	timeLayout = "2006-01-02"
+)
 
 func init() {
 	home, err := homedir.Dir()
@@ -67,7 +74,16 @@ func run(api *slack.Client) int {
 
 				r := bytes.NewReader(out)
 
-				url := S3PutObject(bucketname, filename, r)
+				// get now time
+				t := time.Now()
+				fmt.Printf("%s", t.Format(timeLayout))
+
+				// get random string
+				s := random()
+
+				// upload object to s3 bucket
+				url := S3PutObject(bucketname, t.Format(timeLayout)+"-"+s+"/"+filename, r)
+				// url := S3PutObject(bucketname, filename, r)
 				if err != nil {
 					fmt.Printf("Fatal error : %s \n", err)
 				}
@@ -103,4 +119,10 @@ func S3PutObject(bucketname, key string, rs io.ReadSeeker) string {
 	filepath := S3Endpoint + "/" + bucketname + "/" + key
 
 	return filepath
+}
+
+func random() string {
+	var n uint64
+	binary.Read(rand.Reader, binary.LittleEndian, &n)
+	return strconv.FormatUint(n, 36)
 }
