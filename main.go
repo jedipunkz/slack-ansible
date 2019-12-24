@@ -25,8 +25,7 @@ import (
 
 var (
 	bucketname string = "samplebucket"
-	filename   string = "sample.txt"
-	outputfile string = "/tmp/slack-ansible"
+	filename   string = "aisnble-output.txt"
 )
 
 const (
@@ -69,8 +68,9 @@ func run(api *slack.Client) int {
 			log.Printf("Start up!")
 
 		case *slack.MessageEvent:
-			if strings.HasPrefix(ev.Text, "!echo") {
-				out, err := exec.Command("sh", "-c", ev.Text[1:]).Output()
+			if strings.HasPrefix(ev.Text, "ansible-playbook") {
+				fmt.Printf(ev.Text[:])
+				out, _ := exec.Command("sh", "-c", ev.Text[:]).CombinedOutput()
 
 				r := bytes.NewReader(out)
 
@@ -83,10 +83,6 @@ func run(api *slack.Client) int {
 
 				// upload object to s3 bucket
 				url := S3PutObject(bucketname, t.Format(timeLayout)+"-"+s+"/"+filename, r)
-				// url := S3PutObject(bucketname, filename, r)
-				if err != nil {
-					fmt.Printf("Fatal error : %s \n", err)
-				}
 
 				rtm.SendMessage(rtm.NewOutgoingMessage(url+"\n"+"```"+string(out)+"```", ev.Channel))
 			}
