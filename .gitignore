@@ -5,6 +5,7 @@
 *.so
 *.dylib
 slack-ansible
+.slack-ansible.yaml
 
 # Test binary, build with `go test -c`
 *.test
