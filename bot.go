@@ -104,7 +104,7 @@ func (b *Bot) help() (attachment slack.Attachment) {
 	}
 
 	attachment = slack.Attachment{
-		Pretext: botName + "Command List",
+		Pretext: "Command List",
 		Color:   "#B733FF",
 		Fields:  fields,
 	}
@@ -113,27 +113,28 @@ func (b *Bot) help() (attachment slack.Attachment) {
 
 // execute ansible command and upload log to s3
 func (f *Bot) ansiblePlaybook(shell string) (output string, attachment slack.Attachment, err error) {
-	// execute shell command and get output of command
+	fields := make([]slack.AttachmentField, 0)
+
 	cmdOutput, _ := exec.Command("sh", "-c", shell).CombinedOutput()
 
-	// get bytes io for uploading to s3
 	r := bytes.NewReader(cmdOutput)
 
-	// get now time
 	t := time.Now()
 	fmt.Printf("%s", t.Format(timeLayout))
 
-	// get random string
 	s := random()
 
-	// upload object to s3 bucket
 	url := S3PutObject(bucketname, t.Format(timeLayout)+"-"+s+"/"+filename, r)
 
-	// rtm.SendMessage(rtm.NewOutgoingMessage(url+"\n"+"```"+string(out)+"```", ev.Channel))
+	fields = append(fields, slack.AttachmentField{
+		Title: "@" + botName + " Ansible Output",
+		Value: url,
+	})
 
 	attachment = slack.Attachment{
-		Pretext: url,
+		Pretext: "Ansible-Playbook Execution output :",
 		Color:   "#A9F5F2",
+		Fields:  fields,
 	}
 
 	return string(cmdOutput), attachment, nil
