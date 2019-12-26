@@ -4,7 +4,7 @@ MAINTAINER jedipunkz
 WORKDIR /go/src/
 
 ADD . /go/src/
-ADD ~/.slack-ansible.yaml $HOME/
+ADD ./.slack-ansible.yaml /root/
 
 RUN go mod download
 RUN CGO_ENABLED=0 go build -o /go/bin/slack-ansible
