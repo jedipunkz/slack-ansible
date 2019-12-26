@@ -2,6 +2,8 @@
 
 Slack Bot which deploys server by ansible command, and output logs to aws s3.
 
+<img src="https://raw.githubusercontent.com/jedipunkz/slack-ansible/master/pix/slack-ansible.png">
+
 ## Getting Started
 
 ### Prerequisites
