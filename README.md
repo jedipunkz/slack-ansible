@@ -1,5 +1,7 @@
 # Slack-Ansible
 
+[![Build Status](https://travis-ci.org/jedipunkz/slack-ansible.svg?branch=master)](https://travis-ci.org/jedipunkz/slack-ansible)
+
 Slack Bot which deploys server by ansible command, and output logs to aws s3.
 
 Capture:
