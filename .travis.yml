@@ -10,7 +10,7 @@ language: go
 # You don't need to test on very old versions of the Go compiler. It's the user's
 # responsibility to keep their compiler up to date.
 go:
-  - 1.13.5
+  - 1.13.x
 
 # Only clone the most recent commit.
 git:
@@ -39,5 +39,5 @@ notifications:
 # failing test, we want to see both. Configure golangci-lint with a
 # .golangci.yml file at the top level of your repo.
 script:
-  - slack-cli -h
+  - file slack-ansible
   # - go test -v -race ./...  # Run all the tests with the race detector enabled
